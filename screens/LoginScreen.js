@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet,  View } from 'react-native'
 import React from 'react'
 import LoginForm from '../components/LoginScreen/LoginForm';
 
@@ -21,7 +21,7 @@ export default LoginScreen
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:"white",
+        backgroundColor:"black",
         paddingTop:50,
         paddingHorizontal:12,
         

@@ -1,6 +1,4 @@
 import {
-  Alert,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -11,10 +9,10 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as yup from "yup";
 import { Formik } from "formik";
-import validator from "email-validator";
+
 import { auth, db } from "../../firebase/config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { collection } from "firebase/firestore";
+import {  doc, setDoc } from "firebase/firestore";
 
 const SignupForm = () => {
   const SignupFormSchema = yup.object().shape({
@@ -43,16 +41,16 @@ const SignupForm = () => {
         email,
         password
       );
-      navigation.navigate("LoginScreen");
-
-      db.collection("users").add({
+      
+      await setDoc(doc(db, "users", authUser.user.email), {
         ownerId: authUser.user.uid,
         username: username,
         email: email,
         picture: await getRandomProfilePicture(),
       });
+      navigation.navigate("LoginScreen");
     } catch (error) {
-      console.log("error")
+      console.log("error", error);
     }
   };
 
@@ -117,7 +115,7 @@ const SignupForm = () => {
             </TouchableOpacity>
 
             <View style={styles.signUpContainer}>
-              <Text>Already have an account </Text>
+              <Text style={{ color: "white" }}>Already have an account </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate("LoginScreen")}
               >
@@ -142,6 +140,7 @@ export default SignupForm;
 const styles = StyleSheet.create({
   wrapper: {
     marginTop: 50,
+    padding: 10,
   },
   inputField: {
     borderRadius: 4,
@@ -160,8 +159,10 @@ const styles = StyleSheet.create({
   signUpContainer: {
     marginTop: 10,
     display: "flex",
+    color: "white",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    padding: 10,
   },
 });

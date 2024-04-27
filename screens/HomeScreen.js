@@ -1,26 +1,40 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Stories from "../components/Stories";
 import Post from "../components/Post";
-import { posts } from "../data/post";
+
 import BottonTabs from "../components/BottonTabs";
 import { useNavigation } from "@react-navigation/native";
+import { collectionGroup, getDocs, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 const HomeScreen = () => {
-
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    const getPosts = async () => {
+      onSnapshot(collectionGroup(db, "posts"), (snapshot) => {
+        setPosts(
+          snapshot.docs.map((post) => ({
+            id: post.id, ...post.data()
+          }))
+        );
+      });
+    };
+    getPosts();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <Header />
       <ScrollView>
-      <Stories />
+        <Stories />
         {posts.map((post, index) => (
           <Post key={index} post={post} />
         ))}
       </ScrollView>
-      <BottonTabs/>
+      <BottonTabs />
     </SafeAreaView>
   );
 };

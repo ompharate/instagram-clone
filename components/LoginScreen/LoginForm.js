@@ -10,8 +10,7 @@ import {
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as yup from "yup";
-import { Formik, formik } from "formik";
-import validator from "email-validator";
+import { Formik } from "formik";
 import { auth } from "../../firebase/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
@@ -92,7 +91,7 @@ const LoginForm = () => {
             </TouchableOpacity>
 
             <View style={styles.signUpContainer}>
-              <Text>Don't have an account </Text>
+              <Text style={{color:"white"}}>Don't have an account ? </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate("SignupScreen")}
               >

@@ -1,12 +1,13 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 import { Divider } from "react-native-elements";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 const tabs = [
   {
-    name: "Home",
+    name: "HomeScreen",
     icon: <Entypo name="home" size={24} color="white" />,
   },
   {
@@ -18,14 +19,12 @@ const tabs = [
     icon: <Entypo name="video" size={24} color="white" />,
   },
   {
-    name: "profile",
+    name: "Profile",
     icon: <MaterialIcons name="account-circle" size={24} color="white" />,
   },
 ];
 
 const BottonTabs = () => {
-  const [activeTabs, setActiveTabs] = useState("Home");
-
   return (
     <View>
       <Divider width={1} orientation="vertical" />
@@ -46,12 +45,14 @@ const BottonTabs = () => {
   );
 };
 
-const Icon = ({ icon }) => (
-  <TouchableOpacity onPress={() => setActiveTabs(icon.name)}>
-    {icon.icon}
-  </TouchableOpacity>
-);
-
+const Icon = ({ icon }) => {
+  const navigation = useNavigation();
+  return (
+    <TouchableOpacity onPress={() => navigation.navigate(icon.name)}>
+      {icon.icon}
+    </TouchableOpacity>
+  );
+};
 export default BottonTabs;
 
 const styles = StyleSheet.create({});

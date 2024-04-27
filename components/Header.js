@@ -3,28 +3,37 @@ import React from "react";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase/config";
 const Header = () => {
-  
+  const logOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={logOut}>
         <Image
           style={styles.logo}
           source={require("../assets/images/instatext.png")}
         />
       </TouchableOpacity>
       <View style={styles.iconContainer}>
-        <TouchableOpacity onPress={()=>navigation.navigate("NewPostScreen")}>
+        <TouchableOpacity onPress={() => navigation.navigate("NewPostScreen")}>
           <Feather name="plus-square" size={26} color="white" />
         </TouchableOpacity>
         <TouchableOpacity>
           <FontAwesome5 name="heart" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity>
-            <View style={styles.unReadBadge}>
-                <Text style={styles.unReadBadgeText}>12</Text>
-            </View>
+          <View style={styles.unReadBadge}>
+            <Text style={styles.unReadBadgeText}>12</Text>
+          </View>
           <FontAwesome5 name="facebook-messenger" size={24} color="white" />
         </TouchableOpacity>
       </View>
@@ -54,21 +63,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  unReadBadge:{
-    backgroundColor:"#FF3250",
-    position:"absolute",
-    left:10,
-    bottom:16,
-    width:20,
-    height:18,
-    borderRadius:25,
-    justifyContent:"center",
-    alignItems:"center"    ,
-    zIndex:100
+  unReadBadge: {
+    backgroundColor: "#FF3250",
+    position: "absolute",
+    left: 10,
+    bottom: 16,
+    width: 20,
+    height: 18,
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
   },
-  unReadBadgeText:{
-    color:"white",
-    fontWeight:"bold",
-    fontSize:10
-  }
+  unReadBadgeText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 10,
+  },
 });

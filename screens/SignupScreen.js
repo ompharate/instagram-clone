@@ -22,7 +22,7 @@ export default SignupScreen
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:"white",
+        backgroundColor:"black",
         paddingTop:50,
         paddingHorizontal:12,
         

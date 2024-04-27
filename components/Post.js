@@ -1,11 +1,32 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Divider } from "react-native-elements";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { auth, db } from "../firebase/config";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 const Post = ({ post }) => {
+  const [email, setEmail] = useState(null)
+  const handleLike =  async () =>{
+    const UserEmail = await auth.currentUser.email;
+ 
+    const currentLikeStatus = !post.likes_by_user.includes(UserEmail);
+    setEmail(
+      currentLikeStatus
+      ? UserEmail
+      : null
+    )
+    const postDocRef = doc(db, 'users', post.ownerEmail, 'posts', post.id);
+    
+    await updateDoc(postDocRef, {
+      likes_by_user: currentLikeStatus
+      ? arrayUnion(UserEmail)
+      : arrayRemove(UserEmail)
+    });
+  }
+ 
   return (
     <View style={{ marginBottom: 13 }}>
       <Divider width={1} orientation="vertical" />
@@ -13,7 +34,7 @@ const Post = ({ post }) => {
       <PostImage post={post} />
       <View style={{ marginHorizontal: 15, marginTop: 10 }}>
         {/* <Divider width={1} orientation="vertical"></Divider> */}
-        <PostFooter post={post} />
+        <PostFooter post={post} handleLike={handleLike} email={email}/>
         <Likes post={post} />
         <Caption post={post} />
         <CommentSection post={post} />
@@ -32,7 +53,7 @@ const PostHeader = ({ post }) => (
     }}
   >
     <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <Image style={styles.story} source={{ uri: post.profile_pic_url }} />
+      <Image style={styles.story} source={{ uri: post.profile }} />
       <Text style={{ color: "white", marginLeft: 5, fontWeight: "700" }}>
         {post.user}
       </Text>
@@ -57,7 +78,7 @@ const PostImage = ({ post }) => (
     ></Image>
   </View>
 );
-const PostFooter = ({ post }) => (
+const PostFooter = ({handleLike, post,email }) => (
   <View>
     <View
       style={{
@@ -72,11 +93,12 @@ const PostFooter = ({ post }) => (
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          //   padding: 8,
+      
         }}
       >
-        <TouchableOpacity style={styles.icons}>
-          <AntDesign name="hearto" size={24} color="white" />
+        <TouchableOpacity onPress={()=>handleLike()} style={styles.icons}>
+        {!email ?    <AntDesign name="hearto" size={24} color="white"  /> :   <AntDesign name="hearto" size={24} color="red" />}
+        
         </TouchableOpacity>
         <TouchableOpacity style={styles.icons}>
           <FontAwesome name="comment-o" size={24} color="white" />
@@ -104,23 +126,23 @@ const Likes = ({ post }) => (
     }}
   >
     <Text style={{ color: "white", fontSize: 12, fontWeight: "600" }}>
-      {post.likes.toLocaleString("en")} Likes
+      {post.likes_by_user.length.toLocaleString('en')} Likes
     </Text>
   </View>
 );
 const CommentSection = ({ post }) => (
   <View style={{ marginTop: 5 }}>
-    {!!post.comments.length && (
+    {!!post?.comments?.length && (
       <Text style={{ color: "grey" }}>
-        View {post.comments.length > 1 ? "all" : ""} {post.comments.length}
-        {post.comments.length > 1 ? " comments" : " comment"}
+        View {post.comments?.length > 1 ? "all" : ""} {post?.comments?.length}
+        {post?.comments?.length > 1 ? " comments" : " comment"}
       </Text>
     )}
   </View>
 );
 const Comments = ({ post }) => (
   <View>
-    {post.comments.map((comment, index) => (
+    {post?.comments?.map((comment, index) => (
       <View style={{flexDirection:"row",marginTop:5}} key={index}>
         <Text style={{ color: "grey", fontWeight: "600" }}>
           {comment.user}
